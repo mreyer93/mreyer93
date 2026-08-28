@@ -14,7 +14,9 @@ into something a collaborator can actually read.
 
 Each is a config-driven Snakemake workflow with a local variant sized for a laptop, a
 cloud variant for larger batches, and a client-facing HTML/PDF report as a first-class
-output rather than an afterthought.
+output rather than an afterthought. Each also ships a worked example: a complete run on
+public data, with the figures committed, so you can see the output without installing
+anything.
 
 **[gatk-variant-calling-pipeline](https://github.com/mreyer93/gatk-variant-calling-pipeline)**
 Somatic and germline short-variant calling with the Genome Analysis Toolkit (GATK),
@@ -23,6 +25,9 @@ contamination filtering, joint genotyping via GenomicsDBImport, copy-number and
 loss-of-heterozygosity calls with FACETS, and CADD/Funcotator annotation. Where CADD's
 400 GB database will not fit, the germline path can substitute AlphaMissense — currently
 the ClinGen-preferred missense predictor — at roughly 640 MB.
+*[Worked example](https://github.com/mreyer93/gatk-variant-calling-pipeline/blob/main/example/README.md):*
+a matched tumour/normal pair, where the same tumour yields 28 passing calls against the
+reference alone but only 3 once the matched normal is subtracted.
 
 **[bulk-rnaseq-pipeline](https://github.com/mreyer93/bulk-rnaseq-pipeline)**
 FASTQ to differential expression: fastp, Salmon or STAR+Salmon, tximport, DESeq2. Tool
@@ -30,12 +35,17 @@ choices follow nf-core/rnaseq so results are comparable with the community stand
 sample sheet parser accepts the naming conventions people actually use, merges multi-lane
 samples, handles mixed single- and paired-end runs, and validates the design against the
 data before any compute is spent.
+*[Worked example](https://github.com/mreyer93/bulk-rnaseq-pipeline/blob/main/example/README.md):*
+a yeast RAP1 depletion experiment, with three conditions separating on 90% of the variance
+and recognisable genes topping each contrast.
 
 **[scrnaseq-pipeline](https://github.com/mreyer93/scrnaseq-pipeline)**
 Single-cell RNA-seq following the Scanpy workflow in the single-cell best-practices book:
 quality control, Scrublet doublet detection, normalization, Harmony integration, Leiden
 clustering, marker genes, and provisional cell-type annotation. Starts from count matrices
 or from raw reads via simpleaf/alevin-fry.
+*[Worked example](https://github.com/mreyer93/scrnaseq-pipeline/blob/main/example/README.md):*
+10x PBMC 3k — 4,002 cells, 9 clusters, recovering all six expected blood cell populations.
 
 **[Regulation_Kinetics](https://github.com/mreyer93/Regulation_Kinetics)**
 MATLAB and Python code for my first-author paper, Reyer et al., *Kinetic modeling reveals
@@ -49,11 +59,16 @@ co-transcriptionally.
 
 ### On testing
 
-Each pipeline ships a smoke test that runs end to end on a small public dataset, so the
-claim that it works is checkable rather than asserted. The bulk RNA-seq test uses
-nf-core's subsampled yeast data; the single-cell test uses the 10x Genomics PBMC 3k
-dataset and should recover the expected blood cell types. Each repository is explicit
+Each pipeline ships a smoke test (`./test/run_test.sh`) that runs end to end on a small
+public dataset in a couple of minutes, so the claim that it works is checkable rather than
+asserted. The variant-calling test uses a matched tumour/normal pair from nf-core's sarek
+test data, the bulk RNA-seq test uses subsampled yeast data, and the single-cell test uses
+10x PBMC 3k and should recover the expected blood cell types. Each repository is explicit
 about which paths are verified and which are not.
+
+Running them is also what found the bugs worth finding: Harmony integration that silently
+never applied, tumour-vs-normal calling that was disabled by default, and a `sed -i` call
+that could only ever have worked on Linux.
 
 ### Background
 
