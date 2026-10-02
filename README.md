@@ -36,7 +36,7 @@ sample sheet parser accepts the naming conventions people actually use, merges m
 samples, handles mixed single- and paired-end runs, and validates the design against the
 data before any compute is spent.
 *[Worked example](https://github.com/mreyer93/bulk-rnaseq-pipeline/blob/main/example/README.md):*
-a yeast RAP1 depletion experiment, with three conditions separating on 90% of the variance
+a yeast RAP1 depletion experiment, with three conditions separating on 91% of the variance
 and recognisable genes topping each contrast.
 
 **[scrnaseq-pipeline](https://github.com/mreyer93/scrnaseq-pipeline)**
